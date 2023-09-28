@@ -116,5 +116,14 @@ resource "aws_lambda_permission" "allow_second_bucket" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.trigger_glue_on_s3_event.function_name
   principal     = "s3.amazonaws.com"
-  source_arn    = "arn:aws:s3:::${var.s3_output_bucket}/*"  # Замените на имя вашего бакета
+  source_arn    = "arn:aws:s3:::${var.s3_output_bucket}/*" 
+}
+
+resource "aws_lambda_permission" "example" {
+  statement_id  = "AllowExecutionFromS3"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.tosnowflake.function_name
+  principal     = "s3.amazonaws.com"
+
+  source_arn    = "arn:aws:s3:::${var.s3_output_bucket}/*"
 }

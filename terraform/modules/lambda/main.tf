@@ -25,7 +25,6 @@ resource "aws_lambda_function" "data_upload_function" {
 }
 
 #glue
-
 resource "aws_lambda_function" "trigger_glue_on_s3_event" {
   function_name = "TriggerGlueOnS3Event"
   role          = aws_iam_role.lambda_execution_role.arn
@@ -33,14 +32,30 @@ resource "aws_lambda_function" "trigger_glue_on_s3_event" {
   runtime       = "python3.8"
   timeout = 60
 
-  
-
   filename           = "../lambdas/glue-trigger/code-layer.zip"
   source_code_hash   = filebase64sha256("../lambdas/glue-trigger/code-layer.zip")
 
   environment {
     variables = {
       GLUE_JOB_NAME = "test-job1"  # Задайте ваше имя Glue Job здесь
+    }
+  }
+}
+
+#gluetosnow
+resource "aws_lambda_function" "tosnowflake" {
+  function_name = "tosnowflake"
+  role          = aws_iam_role.lambda_invoke_role.arn
+  handler       = "index.lambda_handler"  # Your lambda handler here
+  runtime       = "python3.8"
+  timeout = 60
+
+  filename           = "../lambdas/glue-trigger/code-layer.zip"
+  source_code_hash   = filebase64sha256("../lambdas/glue-trigger/code-layer.zip")
+
+  environment {
+    variables = {
+      GLUE_JOB_NAME = "parquet-to-snowflake-job"  # Задайте ваше имя Glue Job здесь
     }
   }
 }

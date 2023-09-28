@@ -19,6 +19,11 @@ resource "aws_s3_bucket" "s3_output_bucket" {
     enabled = true
   }
 }
+#бакет etl (скриптов) в glue
+resource "aws_s3_bucket" "etl_scripts_bucket" {
+  bucket = "etl-scripts-bucket-${random_pet.bucket_name.id}"
+  acl    = "private"
+}
 
 #INPUT obj created
 resource "aws_s3_bucket_notification" "bucket_notification" {
@@ -38,25 +43,29 @@ resource "aws_s3_bucket_notification" "bucket_notification_2" {
     events              = ["s3:ObjectCreated:*"]
   }
 }
+#to snowflake
+resource "aws_s3_bucket_notification" "example" {
+  bucket = aws_s3_bucket.s3_output_bucket.bucket
 
-
-#бакет etl (скриптов) в glue
-resource "aws_s3_bucket" "etl_scripts_bucket" {
-  bucket = "etl-scripts-bucket-${random_pet.bucket_name.id}"
-  acl    = "private"
+  lambda_function {
+    lambda_function_arn = var.tosnowflake_arn
+    events              = ["s3:ObjectCreated:*"]
+  }
 }
 
-resource "aws_s3_object" "etl_script" {
-  bucket = aws_s3_bucket.etl_scripts_bucket.bucket
-  key    = "script.py"
-  source = "${path.module}/assets/script.py"
-  etag   = filemd5("${path.module}/assets/script.py")
-}
 
 #для glue to snowflake
 resource "aws_s3_object" "etl_script_2" {
   bucket = aws_s3_bucket.etl_scripts_bucket.bucket
-  key    = "snowflake_int.py"
-  source = "${path.module}/assets/snowflake_int.py"
-  etag   = filemd5("${path.module}/assets/snowflake_int.py")
+  key    = "to_snow_script.py"
+  source = "${path.module}/assets/to_snow_script.py"
+  etag   = filemd5("${path.module}/assets/to_snow_script.py")
+}
+
+#для glue to snowflake
+resource "aws_s3_object" "etl_script_1" {
+  bucket = aws_s3_bucket.etl_scripts_bucket.bucket
+  key    = "script.py"
+  source = "${path.module}/assets/script.py"
+  etag   = filemd5("${path.module}/assets/script.py")
 }

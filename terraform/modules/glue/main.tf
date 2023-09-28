@@ -65,3 +65,5 @@ resource "aws_iam_role_policy_attachment" "glue_s3_access_attachment" {
   role       = aws_iam_role.glue.name
   policy_arn = aws_iam_policy.glue_s3_access.arn
 }
+
+

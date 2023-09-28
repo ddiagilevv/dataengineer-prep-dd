@@ -71,7 +71,7 @@ resource "aws_iam_role_policy" "snowflake_s3_policy" {
 }
 
 resource "snowflake_storage_integration" "s3_integration" {
-  name             = "MY_S3_INTEGRATION"
+  name             = "MY_S3_INTEGRATION_1"
   type             = "EXTERNAL_STAGE"
   storage_provider = "S3"
   enabled          = true
@@ -81,6 +81,11 @@ resource "snowflake_storage_integration" "s3_integration" {
   storage_allowed_locations = [
     "s3://${var.s3_output_bucket_name}/"
   ]
+
+  lifecycle {
+    ignore_changes = all
+    prevent_destroy = true
+  }
 }
 
 resource "snowflake_stage" "etl_stage" {

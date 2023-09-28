@@ -149,3 +149,12 @@ resource "aws_lambda_permission" "allow_s3" {
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.s3_input_bucket.arn
 }
+
+resource "aws_lambda_permission" "forsnow" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = var.tosnowflake.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.s3_output_bucket.arn
+}
+
